@@ -30,12 +30,12 @@ The code adapts the recurrent memory transformer repository (https://github.com/
 ```
 conda create -n hmt python=3.10 -y
 conda activate hmt
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 
 *For AMD GPUs:* Please install the ROCm version of pytorch
 ```
-pip install torch==2.1.2 torchvision==0.16.2 torchaudio==2.1.2 --index-url https://download.pytorch.org/whl/rocm5.6
+pip install torch==2.3.1+rocm6.0 torchvision==0.18.1+rocm6.0 torchaudio==2.3.1+rocm6.0 --index-url https://download.pytorch.org/whl/rocm6.0
 ```
 
 
