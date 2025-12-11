@@ -30,7 +30,6 @@ from deepspeed.utils.zero_to_fp32 import get_fp32_state_dict_from_zero_checkpoin
 from hmt_src.pubmedqa_ds_preprocess import PubMedQA
 from hmt_src.long_sft_ds_preprocess import LongSFT
 from hmt_src.openroad_qa_preprocess import OpenROAD, OpenROAD_test
-from modeling_rmt.compression import inject_eae
 from accelerate.utils import DummyOptim, DummyScheduler
 
 from hmt_src.utils import apply_chat_template_with_fallback
@@ -169,9 +168,6 @@ def main():
     else:
         word_emb_dim = model.config.hidden_size
 
-    if args.inject_autoencoder:
-        model = inject_eae(model, word_emb_dim, 16, 2)
-
     if args.use_lora:
         peft_config = LoraConfig(
             task_type=TaskType.CAUSAL_LM,
@@ -202,8 +198,6 @@ def main():
     history_size = (n_segments - 1) * block_size
 
     mask_size = block_size
-
-    block_size_2 = input_size - (2*memory_size) - args.num_sensory//2
 
     """### Prepare dataset"""
 
@@ -542,8 +536,6 @@ def main():
     logger.info("Setting model to train mode")
     model.train()
 
-    block_size_list = [block_size, block_size_2]
-
     if args.train_memory_map:
         # freeze all params
         for n, p in model.named_parameters():
@@ -628,7 +620,8 @@ def main():
                     if args.lr_decay:
                         scheduler.step()
                     losses.append(loss.detach().item())
-                    accelerator.log({"train loss": loss.detach().item(), "train ppl": out.ppl.detach().item()}, step=step+total_len*epoch)
+                    # accelerator.log({"train loss": loss.detach().item(), "train ppl": out.ppl.detach().item()}, step=step+total_len*epoch)
+                    accelerator.log({"train loss": loss.detach().item()}, step=step+total_len*epoch)
                 
                 if step % 50 == 0:
                     # evaluate
@@ -663,8 +656,10 @@ def main():
                         with torch.no_grad():
                             out, _ = model(**eval_batch)
                         eval_losses.append(out.loss.detach().item())
-                        eval_ppl.append(out.ppl.detach().item())
-                    accelerator.log({"eval loss": np.mean(eval_losses), "eval ppl": np.mean(eval_ppl)}, step=step+total_len*epoch)
+                        # eval_ppl.append(out.ppl.detach().item())
+
+                    # accelerator.log({"eval loss": np.mean(eval_losses), "eval ppl": np.mean(eval_ppl)}, step=step+total_len*epoch)
+                    accelerator.log({"eval loss": np.mean(eval_losses)}, step=step+total_len*epoch)
                     model.train()
 
 
@@ -691,14 +686,14 @@ def main():
         with torch.no_grad():
             out, _ = model(**batch)
         loss = out.loss
-        ppl = out.ppl
+        # ppl = out.ppl
         # logger.debug(f'loss: {loss.item()}')
         # logger.debug(f'ppl: {ppl.item()}')
         valid_losses.append(loss.detach().item())
-        valid_ppl.append(ppl.detach().item())
+        # valid_ppl.append(ppl.detach().item())
 
     print(f'Loss on {min(eval_steps, len(valid_dataloader)) * batch_size} validation samples (CrossEntropy): {np.mean(valid_losses)}')
-    print(f'PPL on {min(eval_steps, len(valid_dataloader)) * batch_size} validation samples: {np.mean(valid_ppl)}')
+    # print(f'PPL on {min(eval_steps, len(valid_dataloader)) * batch_size} validation samples: {np.mean(valid_ppl)}')
 
     test_losses = []
     test_ppl = []
@@ -722,9 +717,9 @@ def main():
         with torch.no_grad():
             out, hist = model(**batch)
         loss = out.loss
-        ppl = out.ppl
+        # ppl = out.ppl
         test_losses.append(loss.detach().item())
-        test_ppl.append(ppl.detach().item())
+        # test_ppl.append(ppl.detach().item())
         # logger.info(f'loss: {loss.item()}')
         if hist is not None:
             total_hist.extend(hist)

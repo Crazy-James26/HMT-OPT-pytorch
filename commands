@@ -1,5 +1,7 @@
-accelerate launch hmt_src/main.py --task_subset=wikitext-2-v1 --use_lora --learning_rate=1e-4 --model_name=meta-llama/Llama-3.2-1B --lr_decay --lr_decay_gamma=0.6 --training_step=1000 --bptt_depth=8 --batch_size=2 --test_length=4096 --num_seg_save=8 --num_sensory=32 --segment_length=512 --train_set_split=50 
+accelerate launch hmt_src/main.py --task_subset=wikitext-2-v1 --use_lora --learning_rate=1e-4 --model_name=meta-llama/Llama-3.2-1B --lr_decay --lr_decay_gamma=0.6 --training_step=1000 --bptt_depth=8 --batch_size=2 --test_length=4096 --num_seg_save=8 --num_sensory=32 --segment_length=512 --train_set_split=1000 
 
-accelerate launch hmt_src/main.py --task_name=HuggingFaceFW/fineweb --task_subset=sample-10BT --use_lora --learning_rate=1e-4 --model_name=meta-llama/Llama-3.2-1B --lr_decay --lr_decay_gamma=0.6 --training_step=1000 --bptt_depth=8 --batch_size=2 --test_length=4096 --num_seg_save=8 --num_sensory=32 --segment_length=512 --train_set_split=50
+accelerate launch hmt_src/main.py --task_subset=wikitext-2-v1 --learning_rate=1e-4 --model_name=meta-llama/Llama-3.2-1B --lr_decay --lr_decay_gamma=0.6 --training_step=1000 --bptt_depth=8 --batch_size=2 --test_length=4096 --num_seg_save=8 --num_sensory=32 --segment_length=512 --train_set_split=1000 
+
+accelerate launch hmt_src/main.py --task_name=HuggingFaceFW/fineweb --task_subset=sample-10BT --use_lora --learning_rate=1e-4 --model_name=meta-llama/Llama-3.2-1B --lr_decay --lr_decay_gamma=0.6 --training_step=1000 --bptt_depth=8 --batch_size=2 --test_length=4096 --num_seg_save=8 --num_sensory=32 --segment_length=512 --train_set_split=2000
 
 accelerate launch hmt_src/main.py --task_name=emozilla/pg19 --use_lora --learning_rate=1e-4 --model_name=meta-llama/Llama-3.2-1B --lr_decay --lr_decay_gamma=0.6 --training_step=600 --bptt_depth=8 --train_set_split=50 --batch_size=2 --test_length=30000 --num_seg_save=32 --num_sensory=32 --segment_length=1024

@@ -483,8 +483,8 @@ class RecurrentWrapper(torch.nn.Module, PyTorchModelHubMixin):
             loss_fct = CrossEntropyLoss(ignore_index=IGNORE_INDEX)
             gen_loss = loss_fct(flat_logits.cuda(), flat_labels.cuda())
             out['loss'] = gen_loss + 0.05 * ret_loss
-            out['ppl'] = torch.exp(gen_loss)
-            out['ret_loss'] = ret_loss
+            # out['ppl'] = torch.exp(gen_loss)
+            # out['ret_loss'] = ret_loss
 
             # filter ignore_index before computing metrics
             flat_labels_cpu = flat_labels.detach().cpu()
@@ -502,12 +502,12 @@ class RecurrentWrapper(torch.nn.Module, PyTorchModelHubMixin):
                 zero_division=0
             )
             accuracy = accuracy_score(labels_valid, preds_valid)
-            out['f1'] = {
-                'precision': precision,
-                'recall': recall,
-                'f1': f1,
-                'accuracy': accuracy,
-            }
+            # out['f1'] = {
+            #     'precision': precision,
+            #     'recall': recall,
+            #     'f1': f1,
+            #     'accuracy': accuracy,
+            # }
 
         else:
             out['loss'] = 0
@@ -522,10 +522,10 @@ class RecurrentWrapper(torch.nn.Module, PyTorchModelHubMixin):
             segment_keys.append('hidden_states')
             out['hidden_states'] = full_hidden_states
 
-        for seg_num, o in enumerate(cell_outputs):
-            for key, value in o.items():
-                if any([sk in key for sk in segment_keys]):
-                    out[f'{key}_{seg_num}'] = value
+        # for seg_num, o in enumerate(cell_outputs):
+        #     for key, value in o.items():
+        #         if any([sk in key for sk in segment_keys]):
+        #             out[f'{key}_{seg_num}'] = value
 
         return out 
         
