@@ -19,9 +19,9 @@ Hierarchical Memory Transformer (HMT) is a novel framework that enables and impr
 ## Code Structure
 
 - `hmt_src/main.py`: Entrypoint of HMT command line.
-- `hmt_src/pubmedqa_ds_preprocess.py`: Script used to preprocess PubMedQA dataset.
-- `modeling_rmt/language_modeling.py`: The HMT model source code.
-- `modeling_rmt/long_mem_cross_attn.py`: The memory recall module.
+- `hmt_src/data/pubmedqa_ds_preprocess.py`: Script used to preprocess PubMedQA dataset.
+- `hmt_src/model/language_modeling.py`: The HMT model source code.
+- `hmt_src/model/long_mem_cross_attn.py`: The memory recall module.
 
 
 ## Instructions
